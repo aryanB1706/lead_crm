@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getLeads } from "../lib/api";
 import { isToday } from "../lib/time";
 import LeadCard from "./LeadCard";
+import LeadDialog from "./LeadDialog";
 import LeadList from "./LeadList";
 import SearchInput from "./SearchInput";
 import StatusFilter from "./StatusFilter";
@@ -19,8 +20,16 @@ export default function LeadBoard({ onSelect = () => {} }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [retryKey, setRetryKey] = useState(0);
+  const [selected, setSelected] = useState(null);
 
   const onSearch = useCallback((q) => setSearch(q), []);
+
+  const handleLeadUpdated = useCallback((updated) => {
+    setLeads((prev) =>
+      prev ? prev.map((l) => (l.id === updated.id ? updated : l)) : prev
+    );
+    setSelected((prev) => (prev && prev.id === updated.id ? updated : prev));
+  }, []);
 
   const load = useCallback(() => {
     let alive = true;
@@ -91,7 +100,7 @@ export default function LeadBoard({ onSelect = () => {} }) {
           <div className="space-y-2 rounded border border-amber-200 bg-amber-50 p-2">
             {pinned.map((l) => (
               <div key={l.id}>
-                <LeadCard lead={l} onSelect={onSelect} />
+                <LeadCard lead={l} onSelect={setSelected} />
                 <p className="mt-1 px-1 text-xs text-zinc-600">
                   Follow-up at{" "}
                   {new Date(l.follow_up_at).toLocaleTimeString([], {
@@ -108,7 +117,7 @@ export default function LeadBoard({ onSelect = () => {} }) {
       <section aria-label="All leads" className={loading ? "opacity-60" : ""}>
         <LeadList
           leads={rest}
-          onSelect={onSelect}
+          onSelect={setSelected}
           emptyMessage={
             leads && leads.length === 0
               ? "No leads yet. Add your first lead."
@@ -116,6 +125,15 @@ export default function LeadBoard({ onSelect = () => {} }) {
           }
         />
       </section>
+
+      {selected ? (
+        <LeadDialog
+          key={selected.id}
+          lead={selected}
+          onClose={() => setSelected(null)}
+          onLeadUpdated={handleLeadUpdated}
+        />
+      ) : null}
     </div>
   );
 }
