@@ -1,52 +1,121 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ApiError, getLeads } from "../lib/api";
-import { timeAgo } from "../lib/time";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getLeads } from "../lib/api";
+import { isToday } from "../lib/time";
+import LeadCard from "./LeadCard";
+import LeadList from "./LeadList";
+import SearchInput from "./SearchInput";
+import StatusFilter from "./StatusFilter";
 
 /**
- * Thin verification board for Step 4.
- * Full list / filters / dialogs land in later steps.
+ * Board state + data fetching. Pinned today's follow-ups on top (no duplicates below).
+ * @param {{onSelect?: (lead: import('../lib/constants').Lead) => void}} props
  */
-export default function LeadBoard() {
+export default function LeadBoard({ onSelect = () => {} }) {
+  const [status, setStatus] = useState("All");
+  const [search, setSearch] = useState("");
   const [leads, setLeads] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [retryKey, setRetryKey] = useState(0);
 
-  useEffect(() => {
+  const onSearch = useCallback((q) => setSearch(q), []);
+
+  const load = useCallback(() => {
     let alive = true;
-    getLeads()
+    setLoading(true);
+    setError("");
+    getLeads({
+      status: status !== "All" ? status : undefined,
+      search: search || undefined,
+    })
       .then((rows) => alive && setLeads(rows))
-      .catch((e) => alive && setError(e instanceof ApiError ? e.message : String(e)));
+      .catch((e) => alive && setError(e?.message || "Failed to load leads"))
+      .finally(() => alive && setLoading(false));
     return () => {
       alive = false;
     };
-  }, []);
+  }, [status, search]);
 
-  if (error) {
+  // Data fetching on filter/search/retry change is intentional here.
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetching leads from API
+  useEffect(() => load(), [load, retryKey]);
+
+  const { pinned, rest } = useMemo(() => {
+    if (!leads) return { pinned: [], rest: [] };
+    const pin = leads
+      .filter((l) => isToday(l.follow_up_at))
+      .sort((a, b) => new Date(a.follow_up_at) - new Date(b.follow_up_at));
+    const ids = new Set(pin.map((l) => l.id));
+    return { pinned: pin, rest: leads.filter((l) => !ids.has(l.id)) };
+  }, [leads]);
+
+  if (loading && !leads) {
     return (
-      <p className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-        API error: {error}
-      </p>
+      <div className="space-y-2" aria-busy="true" aria-label="Loading leads">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="h-20 animate-pulse rounded border border-zinc-200 bg-zinc-100" />
+        ))}
+      </div>
     );
   }
-  if (!leads) return <p className="text-sm text-zinc-500">Loading leads…</p>;
+
+  if (error && !leads) {
+    return (
+      <div className="rounded border border-red-200 bg-red-50 p-4 text-sm">
+        <p className="text-red-700">Failed to load leads: {error}</p>
+        <button
+          type="button"
+          onClick={() => setRetryKey((k) => k + 1)}
+          className="mt-2 rounded bg-zinc-900 px-3 py-1.5 text-white"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-2">
-      <p className="text-sm text-zinc-600">
-        Connected — {leads.length} lead{leads.length === 1 ? "" : "s"} from{" "}
-        <code className="font-mono">{process.env.NEXT_PUBLIC_API_URL}</code>
-      </p>
-      <ul className="divide-y divide-zinc-100 rounded border border-zinc-200 bg-white">
-        {leads.slice(0, 5).map((l) => (
-          <li key={l.id} className="flex items-center justify-between px-3 py-2 text-sm">
-            <span className="font-medium">{l.name}</span>
-            <span className="text-zinc-500">
-              {l.status} · {timeAgo(l.last_discussion_at || l.created_at)}
-            </span>
-          </li>
-        ))}
-      </ul>
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <StatusFilter value={status} onChange={setStatus} />
+        <SearchInput onSearch={onSearch} />
+      </div>
+
+      {pinned.length > 0 && (
+        <section aria-label="Today's follow-ups">
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
+            Today&apos;s follow-ups ({pinned.length})
+          </h2>
+          <div className="space-y-2 rounded border border-amber-200 bg-amber-50 p-2">
+            {pinned.map((l) => (
+              <div key={l.id}>
+                <LeadCard lead={l} onSelect={onSelect} />
+                <p className="mt-1 px-1 text-xs text-zinc-600">
+                  Follow-up at{" "}
+                  {new Date(l.follow_up_at).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section aria-label="All leads" className={loading ? "opacity-60" : ""}>
+        <LeadList
+          leads={rest}
+          onSelect={onSelect}
+          emptyMessage={
+            leads && leads.length === 0
+              ? "No leads yet. Add your first lead."
+              : "No leads match your filters."
+          }
+        />
+      </section>
     </div>
   );
 }
