@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getLeads } from "../lib/api";
 import { isToday } from "../lib/time";
+import AddLeadDialog from "./AddLeadDialog";
 import LeadCard from "./LeadCard";
 import LeadDialog from "./LeadDialog";
 import LeadList from "./LeadList";
@@ -21,8 +22,24 @@ export default function LeadBoard({ onSelect = () => {} }) {
   const [error, setError] = useState("");
   const [retryKey, setRetryKey] = useState(0);
   const [selected, setSelected] = useState(null);
+  const [showAdd, setShowAdd] = useState(false);
 
   const onSearch = useCallback((q) => setSearch(q), []);
+
+  const handleLeadCreated = useCallback(
+    (created) => {
+      // Insert immediately, respecting the active filter/search.
+      const statusOk = status === "All" || created.status === status;
+      const searchOk =
+        !search || created.name.toLowerCase().includes(search.toLowerCase());
+      if (statusOk && searchOk) {
+        setLeads((prev) => (prev ? [created, ...prev] : [created]));
+      }
+      // Open its timeline.
+      setSelected(created);
+    },
+    [status, search]
+  );
 
   const handleLeadUpdated = useCallback((updated) => {
     setLeads((prev) =>
@@ -60,71 +77,77 @@ export default function LeadBoard({ onSelect = () => {} }) {
     return { pinned: pin, rest: leads.filter((l) => !ids.has(l.id)) };
   }, [leads]);
 
-  if (loading && !leads) {
-    return (
-      <div className="space-y-2" aria-busy="true" aria-label="Loading leads">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="h-20 animate-pulse rounded border border-zinc-200 bg-zinc-100" />
-        ))}
-      </div>
-    );
-  }
-
-  if (error && !leads) {
-    return (
-      <div className="rounded border border-red-200 bg-red-50 p-4 text-sm">
-        <p className="text-red-700">Failed to load leads: {error}</p>
-        <button
-          type="button"
-          onClick={() => setRetryKey((k) => k + 1)}
-          className="mt-2 rounded bg-zinc-900 px-3 py-1.5 text-white"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">LeadFlow</h1>
+        <button
+          type="button"
+          onClick={() => setShowAdd(true)}
+          className="rounded bg-zinc-900 px-3 py-2 text-sm text-white"
+        >
+          Add lead
+        </button>
+      </div>
       <div className="space-y-2">
         <StatusFilter value={status} onChange={setStatus} />
         <SearchInput onSearch={onSearch} />
       </div>
 
-      {pinned.length > 0 && (
-        <section aria-label="Today's follow-ups">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-            Today&apos;s follow-ups ({pinned.length})
-          </h2>
-          <div className="space-y-2 rounded border border-amber-200 bg-amber-50 p-2">
-            {pinned.map((l) => (
-              <div key={l.id}>
-                <LeadCard lead={l} onSelect={setSelected} />
-                <p className="mt-1 px-1 text-xs text-zinc-600">
-                  Follow-up at{" "}
-                  {new Date(l.follow_up_at).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
+      {loading && !leads ? (
+        <div className="space-y-2" aria-busy="true" aria-label="Loading leads">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-20 animate-pulse rounded border border-zinc-200 bg-zinc-100" />
+          ))}
+        </div>
+      ) : error && !leads ? (
+        <div className="rounded border border-red-200 bg-red-50 p-4 text-sm">
+          <p className="text-red-700">Failed to load leads: {error}</p>
+          <button
+            type="button"
+            onClick={() => setRetryKey((k) => k + 1)}
+            className="mt-2 rounded bg-zinc-900 px-3 py-1.5 text-white"
+          >
+            Retry
+          </button>
+        </div>
+      ) : (
+        <>
+          {pinned.length > 0 && (
+            <section aria-label="Today's follow-ups">
+              <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
+                Today&apos;s follow-ups ({pinned.length})
+              </h2>
+              <div className="space-y-2 rounded border border-amber-200 bg-amber-50 p-2">
+                {pinned.map((l) => (
+                  <div key={l.id}>
+                    <LeadCard lead={l} onSelect={setSelected} />
+                    <p className="mt-1 px-1 text-xs text-zinc-600">
+                      Follow-up at{" "}
+                      {new Date(l.follow_up_at).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
-      )}
+            </section>
+          )}
 
-      <section aria-label="All leads" className={loading ? "opacity-60" : ""}>
-        <LeadList
-          leads={rest}
-          onSelect={setSelected}
-          emptyMessage={
-            leads && leads.length === 0
-              ? "No leads yet. Add your first lead."
-              : "No leads match your filters."
-          }
-        />
-      </section>
+          <section aria-label="All leads" className={loading ? "opacity-60" : ""}>
+            <LeadList
+              leads={rest}
+              onSelect={setSelected}
+              emptyMessage={
+                leads && leads.length === 0
+                  ? "No leads yet. Add your first lead."
+                  : "No leads match your filters."
+              }
+            />
+          </section>
+        </>
+      )}
 
       {selected ? (
         <LeadDialog
@@ -132,6 +155,13 @@ export default function LeadBoard({ onSelect = () => {} }) {
           lead={selected}
           onClose={() => setSelected(null)}
           onLeadUpdated={handleLeadUpdated}
+        />
+      ) : null}
+
+      {showAdd ? (
+        <AddLeadDialog
+          onClose={() => setShowAdd(false)}
+          onCreated={handleLeadCreated}
         />
       ) : null}
     </div>
