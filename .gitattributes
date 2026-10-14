@@ -1,0 +1,2 @@
+# Keep shell scripts LF-only so Docker entrypoints work on Windows checkouts.
+*.sh text eol=lf
