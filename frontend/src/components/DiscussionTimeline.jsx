@@ -21,7 +21,7 @@ export default function DiscussionTimeline({ discussions, loading }) {
     <ul className="space-y-2">
       {discussions.map((d) => (
         <li key={d.id} className="rounded border border-zinc-200 bg-white px-3 py-2">
-          <p className="text-sm whitespace-pre-wrap">{d.note}</p>
+          <p className="text-sm break-words whitespace-pre-wrap">{d.note}</p>
           <p className="mt-1 text-xs text-zinc-500">
             {new Date(d.created_at).toLocaleString()}
           </p>

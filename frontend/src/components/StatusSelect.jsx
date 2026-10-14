@@ -15,7 +15,7 @@ export default function StatusSelect({ value, onChange, disabled, saving }) {
         disabled={disabled || saving}
         onChange={(e) => onChange(e.target.value)}
         aria-label="Lead status"
-        className="rounded border border-zinc-200 bg-white px-2 py-1 text-sm disabled:opacity-60"
+        className="rounded border border-zinc-200 bg-white px-2 py-1 text-sm disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
       >
         {STATUSES.map((s) => (
           <option key={s} value={s}>

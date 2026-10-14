@@ -47,7 +47,7 @@ export default function DiscussionForm({ onSubmit, saving, error }) {
           rows={3}
           required
           placeholder="What was discussed?"
-          className="w-full rounded border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+          className="w-full rounded border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
         />
       </label>
       <label className="block text-sm">
@@ -56,7 +56,7 @@ export default function DiscussionForm({ onSubmit, saving, error }) {
           type="datetime-local"
           value={followUp}
           onChange={(e) => setFollowUp(e.target.value)}
-          className="w-full rounded border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+          className="w-full rounded border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
         />
       </label>
       {localError || error ? (
@@ -65,7 +65,7 @@ export default function DiscussionForm({ onSubmit, saving, error }) {
       <button
         type="submit"
         disabled={!canSubmit}
-        className="rounded bg-zinc-900 px-3 py-2 text-sm text-white disabled:opacity-50"
+        className="rounded bg-zinc-900 px-3 py-2 text-sm text-white disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
       >
         {saving ? "Saving…" : "Add note"}
       </button>

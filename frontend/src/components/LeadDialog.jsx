@@ -12,10 +12,11 @@ import StatusSelect from "./StatusSelect";
  * @param {{
  *   lead: import('../lib/constants').Lead,
  *   onClose: () => void,
- *   onLeadUpdated: (lead: import('../lib/constants').Lead) => void
+ *   onLeadUpdated: (lead: import('../lib/constants').Lead) => void,
+ *   onNotify?: (message: string, kind?: string) => void
  * }} props
  */
-export default function LeadDialog({ lead, onClose, onLeadUpdated }) {
+export default function LeadDialog({ lead, onClose, onLeadUpdated, onNotify = () => {} }) {
   const [live, setLive] = useState(lead);
   const [discussions, setDiscussions] = useState(null);
   const [discLoading, setDiscLoading] = useState(true);
@@ -54,11 +55,14 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated }) {
       const updated = await updateLead(lead.id, { status: next });
       setLive(updated);
       onLeadUpdated(updated);
+      onNotify(`Status updated to ${next}`);
     } catch (e) {
       // Roll back on failure.
       setLive(prev);
       onLeadUpdated(prev);
-      setStatusError(e?.message || "Failed to update status");
+      const msg = e?.message || "Failed to update status";
+      setStatusError(msg);
+      onNotify(msg, "error");
     } finally {
       setStatusSaving(false);
     }
@@ -80,9 +84,11 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated }) {
       };
       setLive(updated);
       onLeadUpdated(updated);
+      onNotify("Note added");
     } catch (e) {
       const msg = e?.message || "Failed to save note";
       setNoteError(msg);
+      onNotify(msg, "error");
       throw e;
     } finally {
       setNoteSaving(false);
@@ -97,8 +103,11 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated }) {
       const updated = await updateLead(lead.id, { follow_up_at: null });
       setLive(updated);
       onLeadUpdated(updated);
+      onNotify("Follow-up cleared");
     } catch (e) {
-      setStatusError(e?.message || "Failed to clear follow-up");
+      const msg = e?.message || "Failed to clear follow-up";
+      setStatusError(msg);
+      onNotify(msg, "error");
     } finally {
       setClearing(false);
     }
@@ -108,8 +117,8 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated }) {
     <Modal onClose={onClose} label={`Lead: ${live.name}`}>
       <div className="flex max-h-[90vh] flex-col">
         <div className="flex items-start justify-between gap-3 border-b border-zinc-200 p-4">
-          <div>
-            <h2 className="text-lg font-semibold">{live.name}</h2>
+          <div className="min-w-0">
+            <h2 className="break-words text-lg font-semibold">{live.name ?? "Unnamed lead"}</h2>
             <p className="text-sm text-zinc-500">
               {[live.company, live.phone].filter(Boolean).join(" · ") || "—"}
             </p>
@@ -130,7 +139,7 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated }) {
                   type="button"
                   onClick={handleClearFollowUp}
                   disabled={clearing}
-                  className="ml-1 underline disabled:opacity-50"
+                  className="ml-1 underline disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-zinc-900"
                 >
                   {clearing ? "Clearing…" : "Clear"}
                 </button>
@@ -141,7 +150,7 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated }) {
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="rounded px-2 py-1 text-xl leading-none hover:bg-zinc-100"
+            className="shrink-0 rounded px-2 py-1 text-xl leading-none hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
           >
             ×
           </button>
@@ -152,7 +161,7 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated }) {
           {discussions === null && !discLoading ? (
             <p role="alert" className="text-sm text-red-600">
               Failed to load discussions.{" "}
-              <button type="button" className="underline" onClick={loadDiscussions}>
+              <button type="button" className="underline focus-visible:outline-2 focus-visible:outline-zinc-900" onClick={loadDiscussions}>
                 Retry
               </button>
             </p>

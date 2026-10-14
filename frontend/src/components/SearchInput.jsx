@@ -21,7 +21,7 @@ export default function SearchInput({ onSearch, placeholder = "Search by name…
       onChange={(e) => setText(e.target.value)}
       placeholder={placeholder}
       aria-label="Search leads by name"
-      className="w-full rounded border border-zinc-200 bg-white px-3 py-2 text-sm outline-none placeholder:text-zinc-400 focus:border-zinc-500"
+      className="w-full rounded border border-zinc-200 bg-white px-3 py-2 text-sm outline-none placeholder:text-zinc-400 focus:border-zinc-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
     />
   );
 }
