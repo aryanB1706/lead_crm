@@ -56,59 +56,59 @@ export default function AddLeadDialog({ onClose, onCreated }) {
 
   return (
     <Modal onClose={onClose} label="Add lead">
-      <form onSubmit={handleSubmit} className="space-y-3 p-4">
+      <form onSubmit={handleSubmit} className="space-y-3 p-4 sm:p-5">
         <div className="flex items-start justify-between">
-          <h2 className="text-lg font-semibold">Add lead</h2>
+          <h2 className="text-xl font-extrabold text-zinc-900">Add lead</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="rounded px-2 py-1 text-xl leading-none hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="rounded-lg px-2 py-1 text-xl leading-none font-bold text-zinc-700 hover:bg-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             ×
           </button>
         </div>
 
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium">Name *</span>
+        <label className="block text-sm font-semibold text-zinc-900">
+          <span className="mb-1 block">Name *</span>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Full name"
             autoFocus
-            className="w-full rounded border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="w-full rounded-lg border-2 border-zinc-300 bg-white px-3 py-2 text-zinc-900 outline-none focus:border-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           />
           {nameError ? <span className="mt-1 block text-sm text-red-600">{nameError}</span> : null}
         </label>
 
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium">Company</span>
+        <label className="block text-sm font-semibold text-zinc-900">
+          <span className="mb-1 block">Company</span>
           <input
             value={company}
             onChange={(e) => setCompany(e.target.value)}
             placeholder="Optional"
-            className="w-full rounded border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="w-full rounded-lg border-2 border-zinc-300 bg-white px-3 py-2 text-zinc-900 outline-none focus:border-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           />
         </label>
 
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium">Phone</span>
+        <label className="block text-sm font-semibold text-zinc-900">
+          <span className="mb-1 block">Phone</span>
           <input
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Optional"
             inputMode="tel"
-            className="w-full rounded border border-zinc-200 px-3 py-2 outline-none focus:border-zinc-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="w-full rounded-lg border-2 border-zinc-300 bg-white px-3 py-2 text-zinc-900 outline-none focus:border-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           />
           {phoneHint ? <span className="mt-1 block text-xs text-amber-700">{phoneHint}</span> : null}
         </label>
 
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium">Status</span>
+        <label className="block text-sm font-semibold text-zinc-900">
+          <span className="mb-1 block">Status</span>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="w-full rounded border border-zinc-200 bg-white px-2 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="w-full rounded-lg border-2 border-zinc-300 bg-white px-2 py-2 text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             {STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -126,14 +126,14 @@ export default function AddLeadDialog({ onClose, onCreated }) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded border border-zinc-200 px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="rounded-lg border-2 border-zinc-300 px-3 py-2 text-sm font-semibold text-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving || !name.trim()}
-            className="rounded bg-zinc-900 px-3 py-2 text-sm text-white disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             {saving ? "Saving…" : "Create lead"}
           </button>

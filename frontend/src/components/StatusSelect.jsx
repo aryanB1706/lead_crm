@@ -8,14 +8,14 @@ import { STATUSES } from "../lib/constants";
  */
 export default function StatusSelect({ value, onChange, disabled, saving }) {
   return (
-    <label className="flex items-center gap-2 text-sm">
-      <span className="text-zinc-500">Status</span>
+    <label className="flex items-center gap-2 text-sm font-semibold text-zinc-900">
+      <span>Status</span>
       <select
         value={value}
         disabled={disabled || saving}
         onChange={(e) => onChange(e.target.value)}
         aria-label="Lead status"
-        className="rounded border border-zinc-200 bg-white px-2 py-1 text-sm disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+        className="rounded-lg border-2 border-zinc-300 bg-white px-2 py-1 text-sm font-semibold text-zinc-900 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
         {STATUSES.map((s) => (
           <option key={s} value={s}>
@@ -23,7 +23,7 @@ export default function StatusSelect({ value, onChange, disabled, saving }) {
           </option>
         ))}
       </select>
-      {saving ? <span className="text-xs text-zinc-500">Saving…</span> : null}
+      {saving ? <span className="text-xs font-medium text-indigo-700">Saving…</span> : null}
     </label>
   );
 }

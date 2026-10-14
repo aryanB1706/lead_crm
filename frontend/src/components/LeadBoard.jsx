@@ -104,14 +104,19 @@ export default function LeadBoard() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-semibold">LeadFlow</h1>
+      <div className="flex items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-sm">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900">LeadFlow</h1>
+          <p className="text-xs font-medium text-zinc-600">
+            {leads ? `${leads.length} lead${leads.length === 1 ? "" : "s"}` : "Loading…"}
+          </p>
+        </div>
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="rounded bg-zinc-900 px-3 py-2 text-sm text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+          className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Add lead
+          + Add lead
         </button>
       </div>
       <div className="space-y-2">
@@ -120,18 +125,18 @@ export default function LeadBoard() {
       </div>
 
       {loading && !leads ? (
-        <div className="space-y-2" aria-busy="true" aria-label="Loading leads">
+        <div className="space-y-3" aria-busy="true" aria-label="Loading leads">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-20 animate-pulse rounded border border-zinc-200 bg-zinc-100" />
+            <div key={i} className="h-24 animate-pulse rounded-xl border border-zinc-200 bg-zinc-100" />
           ))}
         </div>
       ) : error && !leads ? (
-        <div className="rounded border border-red-200 bg-red-50 p-4 text-sm">
-          <p className="text-red-700">Failed to load leads: {error}</p>
+        <div className="rounded-xl border-2 border-red-300 bg-red-50 p-4 text-sm">
+          <p className="font-semibold text-red-800">Failed to load leads: {error}</p>
           <button
             type="button"
             onClick={() => setRetryKey((k) => k + 1)}
-            className="mt-2 rounded bg-zinc-900 px-3 py-1.5 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="mt-2 rounded bg-indigo-600 px-3 py-1.5 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Retry
           </button>
@@ -140,10 +145,10 @@ export default function LeadBoard() {
         <>
           {pinned.length > 0 && (
             <section aria-label="Today's follow-ups">
-              <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-                Today&apos;s follow-ups ({pinned.length})
+              <h2 className="mb-2 text-sm font-extrabold tracking-wide text-amber-900 uppercase">
+                ● Today&apos;s follow-ups ({pinned.length})
               </h2>
-              <div className="space-y-2 rounded border border-amber-200 bg-amber-50 p-2">
+              <div className="space-y-2 rounded-xl border border-amber-300 bg-amber-50 p-2.5">
                 {pinned.map((l) => (
                   <div key={l.id}>
                     <LeadCard lead={l} onSelect={setSelected} now={now} />

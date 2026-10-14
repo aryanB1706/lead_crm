@@ -13,10 +13,10 @@ import LeadCard from "./LeadCard";
  */
 export default function LeadList({ leads, onSelect, now, emptyMessage = "No leads found." }) {
   if (!leads.length) {
-    return <p className="rounded border border-dashed p-6 text-center text-sm text-zinc-500">{emptyMessage}</p>;
+    return <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-sm font-medium text-zinc-700">{emptyMessage}</p>;
   }
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {leads.map((lead) => (
         <LeadCard key={lead.id} lead={lead} onSelect={onSelect} now={now} />
       ))}

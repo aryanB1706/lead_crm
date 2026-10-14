@@ -116,10 +116,10 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated, onNotify = ()
   return (
     <Modal onClose={onClose} label={`Lead: ${live.name}`}>
       <div className="flex max-h-[90vh] flex-col">
-        <div className="flex items-start justify-between gap-3 border-b border-zinc-200 p-4">
+        <div className="flex items-start justify-between gap-3 border-b-2 border-zinc-200 bg-indigo-50/60 p-4">
           <div className="min-w-0">
-            <h2 className="break-words text-lg font-semibold">{live.name ?? "Unnamed lead"}</h2>
-            <p className="text-sm text-zinc-500">
+            <h2 className="break-words text-xl font-extrabold text-zinc-900">{live.name ?? "Unnamed lead"}</h2>
+            <p className="text-sm font-medium text-zinc-700">
               {[live.company, live.phone].filter(Boolean).join(" · ") || "—"}
             </p>
             <div className="mt-2">
@@ -133,13 +133,13 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated, onNotify = ()
               <p role="alert" className="mt-1 text-sm text-red-600">{statusError}</p>
             ) : null}
             {live.follow_up_at ? (
-              <p className="mt-2 text-sm text-zinc-600">
+              <p className="mt-2 rounded-lg bg-sky-100 px-2 py-1 text-sm font-semibold text-sky-900">
                 Follow-up: {new Date(live.follow_up_at).toLocaleString()}{" "}
                 <button
                   type="button"
                   onClick={handleClearFollowUp}
                   disabled={clearing}
-                  className="ml-1 underline disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-zinc-900"
+                  className="ml-1 font-semibold underline disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-indigo-600"
                 >
                   {clearing ? "Clearing…" : "Clear"}
                 </button>
@@ -150,7 +150,7 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated, onNotify = ()
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="shrink-0 rounded px-2 py-1 text-xl leading-none hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="shrink-0 rounded-lg px-2 py-1 text-xl leading-none font-bold text-zinc-700 hover:bg-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             ×
           </button>
@@ -161,7 +161,7 @@ export default function LeadDialog({ lead, onClose, onLeadUpdated, onNotify = ()
           {discussions === null && !discLoading ? (
             <p role="alert" className="text-sm text-red-600">
               Failed to load discussions.{" "}
-              <button type="button" className="underline focus-visible:outline-2 focus-visible:outline-zinc-900" onClick={loadDiscussions}>
+              <button type="button" className="font-semibold underline focus-visible:outline-2 focus-visible:outline-indigo-600" onClick={loadDiscussions}>
                 Retry
               </button>
             </p>

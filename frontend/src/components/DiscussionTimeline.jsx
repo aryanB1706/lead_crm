@@ -15,14 +15,14 @@ export default function DiscussionTimeline({ discussions, loading }) {
     );
   }
   if (!discussions || !discussions.length) {
-    return <p className="rounded border border-dashed p-4 text-center text-sm text-zinc-500">No discussions yet.</p>;
+    return <p className="rounded border border-dashed p-4 text-center text-sm font-medium text-zinc-600">No discussions yet.</p>;
   }
   return (
     <ul className="space-y-2">
       {discussions.map((d) => (
-        <li key={d.id} className="rounded border border-zinc-200 bg-white px-3 py-2">
-          <p className="text-sm break-words whitespace-pre-wrap">{d.note}</p>
-          <p className="mt-1 text-xs text-zinc-500">
+        <li key={d.id} className="rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2.5">
+          <p className="text-sm font-normal break-words whitespace-pre-wrap text-zinc-900">{d.note}</p>
+          <p className="mt-1 text-xs font-medium text-zinc-700">
             {new Date(d.created_at).toLocaleString()}
           </p>
         </li>

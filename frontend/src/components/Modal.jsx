@@ -43,7 +43,7 @@ export default function Modal({ onClose, label, children }) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-200/70 p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -54,7 +54,7 @@ export default function Modal({ onClose, label, children }) {
         aria-modal="true"
         aria-label={label}
         tabIndex={-1}
-        className="max-h-[90vh] w-full max-w-lg overflow-hidden rounded-lg bg-white shadow-xl outline-none"
+        className="max-h-[90vh] w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-zinc-900/10 outline-none"
       >
         {children}
       </div>

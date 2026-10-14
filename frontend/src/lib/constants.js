@@ -36,14 +36,14 @@ export const STATUSES = [
 ];
 
 /**
- * Badge colors per status (Tailwind classes).
+ * Badge colors per status — high-contrast pairs with matching borders.
  * @type {Object<string, string>}
  */
 export const STATUS_COLORS = {
-  New: "bg-slate-100 text-slate-700",
-  Contacted: "bg-blue-100 text-blue-700",
-  Qualified: "bg-amber-100 text-amber-800",
-  "Proposal Sent": "bg-purple-100 text-purple-700",
-  Won: "bg-green-100 text-green-700",
-  Lost: "bg-red-100 text-red-700",
+  New: "border-sky-300 bg-sky-100 text-sky-900",
+  Contacted: "border-blue-300 bg-blue-100 text-blue-900",
+  Qualified: "border-amber-400 bg-amber-200 text-amber-950",
+  "Proposal Sent": "border-violet-300 bg-violet-100 text-violet-900",
+  Won: "border-emerald-300 bg-emerald-100 text-emerald-900",
+  Lost: "border-rose-300 bg-rose-100 text-rose-900",
 };

@@ -18,10 +18,10 @@ export default function StatusFilter({ value, onChange }) {
             type="button"
             onClick={() => onChange(s)}
             aria-pressed={active}
-            className={`rounded-full border px-3 py-1 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 ${
+            className={`rounded-full border-2 px-3.5 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
               active
-                ? "border-zinc-900 bg-zinc-900 text-white"
-                : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400"
+                ? "border-indigo-600 bg-indigo-600 text-white shadow-sm"
+                : "border-zinc-300 bg-white text-zinc-800 hover:border-indigo-400 hover:text-indigo-700"
             }`}
           >
             {s}
